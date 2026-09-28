@@ -1,4 +1,7 @@
 package com.expiryguard.server.entity;
 
-public class MovementType {
+public enum MovementType {
+    RECEIVED,
+    SOLD,
+    DISPOSED
 }

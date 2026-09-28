@@ -1,4 +1,7 @@
 package com.expiryguard.server.repository;
 
-public class SupplierRepository {
+import com.expiryguard.server.entity.Supplier;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface SupplierRepository extends JpaRepository<Supplier, Long> {
 }
