@@ -5,7 +5,7 @@ import { Badge } from '../components/common/Badge';
 import { Input } from '../components/common/Input';
 import { Select } from '../components/common/Select';
 import { Button } from '../components/common/Button';
-import { Search, Plus, Filter, ArrowUpDown, MoreVertical, Package } from 'lucide-react';
+import { Search, Plus, Filter, ArrowUpDown, MoreVertical, Package, ScanLine } from 'lucide-react';
 import { formatDate } from '../utils/expiryUtils';
 import { Link } from 'react-router-dom';
 
@@ -30,27 +30,35 @@ export function Inventory() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Inventory Management</h1>
-          <p className="text-slate-500">View and manage your current stock levels and expiry dates.</p>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Medicine & Product Inventory</h1>
+          <p className="text-slate-500 text-sm">View, search, and monitor batch stock levels and expiry dates.</p>
         </div>
-        <Link to="/add-product">
-          <Button className="shrink-0">
-            <Plus className="w-4 h-4 mr-2" />
-            Add Product
-          </Button>
-        </Link>
+        <div className="flex flex-wrap items-center gap-3">
+          <Link to="/scan-product">
+            <Button variant="outline" className="border-emerald-300 text-emerald-700 hover:bg-emerald-50 shadow-sm">
+              <ScanLine className="w-4 h-4 mr-2 text-emerald-600" />
+              Scan Product
+            </Button>
+          </Link>
+          <Link to="/add-product">
+            <Button className="shadow-sm">
+              <Plus className="w-4 h-4 mr-2" />
+              Add Manually
+            </Button>
+          </Link>
+        </div>
       </div>
 
-      <Card>
-        <div className="p-4 border-b border-slate-100 flex flex-col md:flex-row gap-4 bg-slate-50/50">
+      <Card className="border-slate-200/80 shadow-sm">
+        <div className="p-4 border-b border-slate-100 flex flex-col md:flex-row gap-4 bg-slate-50/70">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input 
               type="text"
-              placeholder="Search products or SKUs..."
+              placeholder="Search medicines, SKU, or batch..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+              className="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
             />
           </div>
           <div className="flex flex-col sm:flex-row gap-4">
@@ -58,7 +66,7 @@ export function Inventory() {
               <select 
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="w-full h-10 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full h-10 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
               >
                 <option value="">All Categories</option>
                 {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -68,7 +76,7 @@ export function Inventory() {
               <select 
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-full h-10 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full h-10 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
               >
                 <option value="">All Statuses</option>
                 <option value="good">Good</option>

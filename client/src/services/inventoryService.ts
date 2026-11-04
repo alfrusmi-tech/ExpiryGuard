@@ -1,5 +1,5 @@
 import type { Product, Category, Alert, DashboardStats } from '../types';
-import { mockProducts, mockCategories } from '../data/mockData';
+import { mockProducts, mockCategories, mockAlerts } from '../data/mockData';
 
 export const inventoryService = {
   getProducts: async (): Promise<Product[]> => {
@@ -11,26 +11,7 @@ export const inventoryService = {
   },
 
   getAlerts: async (): Promise<Alert[]> => {
-    const response = await fetch('/api/alerts');
-
-    if (!response.ok) {
-      throw new Error(`Could not load alerts: ${response.status}`);
-    }
-
-    const data: Array<{
-      id: string;
-      productId: number;
-      type: Alert['type'];
-      message: string;
-      date: string;
-      resolved: boolean;
-    }> = await response.json();
-
-    // React currently uses string IDs; the backend returns numeric IDs.
-    return data.map(alert => ({
-      ...alert,
-      productId: String(alert.productId),
-    }));
+    return [...mockAlerts];
   },
 
   getDashboardStats: async (): Promise<DashboardStats> => {

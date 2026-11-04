@@ -6,6 +6,7 @@ import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
 import { Inventory } from './pages/Inventory';
 import { AddProduct } from './pages/AddProduct';
+import { ScanProduct } from './pages/ScanProduct';
 import { ExpiryAlerts } from './pages/ExpiryAlerts';
 import { Categories } from './pages/Categories';
 import { Reports } from './pages/Reports';
@@ -24,6 +25,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/inventory" element={<Inventory />} />
           <Route path="/add-product" element={<AddProduct />} />
+          <Route path="/scan-product" element={<ScanProduct />} />
           <Route path="/alerts" element={<ExpiryAlerts />} />
           <Route path="/categories" element={<Categories />} />
           <Route path="/reports" element={<Reports />} />
