@@ -10,12 +10,14 @@ export function Dashboard() {
   const { stats, alerts, products, loading } = useInventory();
 
   if (loading || !stats) {
-    return <div className="animate-pulse space-y-6">
-      <div className="h-8 bg-slate-200 rounded w-1/4"></div>
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        {[1,2,3,4].map(i => <div key={i} className="h-32 bg-slate-200 rounded-xl"></div>)}
+    return (
+      <div className="animate-pulse space-y-6">
+        <div className="h-8 bg-slate-200 rounded w-1/4"></div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          {[1,2,3,4].map(i => <div key={i} className="h-32 bg-slate-200 rounded-xl"></div>)}
+        </div>
       </div>
-    </div>;
+    );
   }
 
   const recentActivity = [...products].sort((a, b) => 
@@ -26,61 +28,61 @@ export function Dashboard() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Dashboard Overview</h1>
-        <p className="text-slate-500">Welcome back. Here's what's happening with your inventory today.</p>
+        <p className="text-slate-500">Welcome back. Here's what's happening with your pharmacy inventory today.</p>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
+        <Card className="border-slate-200/80 shadow-2xs">
           <CardContent className="p-6">
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-sm font-medium text-slate-500">Total Products</p>
                 <h3 className="text-3xl font-bold text-slate-900 mt-2">{stats.totalProducts}</h3>
               </div>
-              <div className="p-3 bg-blue-100 rounded-lg text-blue-600">
+              <div className="p-3 bg-emerald-50 rounded-xl text-emerald-700 border border-emerald-100">
                 <Package className="w-6 h-6" />
               </div>
             </div>
           </CardContent>
         </Card>
         
-        <Card>
+        <Card className="border-slate-200/80 shadow-2xs">
           <CardContent className="p-6">
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-sm font-medium text-slate-500">Total Items in Stock</p>
                 <h3 className="text-3xl font-bold text-slate-900 mt-2">{stats.totalItems}</h3>
               </div>
-              <div className="p-3 bg-emerald-100 rounded-lg text-emerald-600">
+              <div className="p-3 bg-teal-50 rounded-xl text-teal-700 border border-teal-100">
                 <ShoppingCart className="w-6 h-6" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-slate-200/80 shadow-2xs">
           <CardContent className="p-6">
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-sm font-medium text-slate-500">Expiring Soon</p>
                 <h3 className="text-3xl font-bold text-amber-600 mt-2">{stats.expiringSoon}</h3>
               </div>
-              <div className="p-3 bg-amber-100 rounded-lg text-amber-600">
+              <div className="p-3 bg-amber-50 rounded-xl text-amber-600 border border-amber-100">
                 <AlertTriangle className="w-6 h-6" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-slate-200/80 shadow-2xs">
           <CardContent className="p-6">
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-sm font-medium text-slate-500">Expired</p>
                 <h3 className="text-3xl font-bold text-red-600 mt-2">{stats.expiredProducts}</h3>
               </div>
-              <div className="p-3 bg-red-100 rounded-lg text-red-600">
+              <div className="p-3 bg-red-50 rounded-xl text-red-600 border border-red-100">
                 <AlertCircle className="w-6 h-6" />
               </div>
             </div>
@@ -90,10 +92,10 @@ export function Dashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Urgent Alerts */}
-        <Card className="lg:col-span-2">
+        <Card className="lg:col-span-2 border-slate-200/80 shadow-2xs">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Next to Expire</CardTitle>
-            <Link to="/inventory" className="text-sm font-medium text-blue-600 hover:text-blue-700">View All</Link>
+            <Link to="/inventory" className="text-sm font-medium text-emerald-600 hover:text-emerald-700">View All</Link>
           </CardHeader>
           <CardContent className="p-0">
             <div className="overflow-x-auto">
@@ -132,7 +134,7 @@ export function Dashboard() {
         </Card>
 
         {/* Quick Alerts Summary */}
-        <Card>
+        <Card className="border-slate-200/80 shadow-2xs">
           <CardHeader>
             <CardTitle>Urgent Alerts</CardTitle>
           </CardHeader>
@@ -143,7 +145,7 @@ export function Dashboard() {
                   <div className={`mt-0.5 p-1.5 rounded-full ${
                     alert.type === 'expired' ? 'bg-red-100 text-red-600' :
                     alert.type === 'expiring_soon' ? 'bg-amber-100 text-amber-600' :
-                    'bg-indigo-100 text-indigo-600'
+                    'bg-slate-100 text-slate-600'
                   }`}>
                     {alert.type === 'expired' ? <AlertCircle className="w-4 h-4" /> : 
                      <AlertTriangle className="w-4 h-4" />}
@@ -165,7 +167,7 @@ export function Dashboard() {
             
             {alerts.length > 0 && (
               <div className="mt-6 pt-4 border-t border-slate-100">
-                <Link to="/alerts" className="text-sm font-medium text-blue-600 hover:text-blue-700 w-full flex justify-center">
+                <Link to="/alerts" className="text-sm font-medium text-emerald-600 hover:text-emerald-700 w-full flex justify-center">
                   View All {alerts.length} Alerts
                 </Link>
               </div>

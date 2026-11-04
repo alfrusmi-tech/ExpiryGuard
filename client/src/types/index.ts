@@ -18,6 +18,9 @@ export interface Product {
   supplier: string;
   reorderLevel: number;
   status?: ExpiryStatus; // Can be computed on the fly
+  barcode?: string;
+  manufacturingDate?: string;
+  unitPrice?: number;
 }
 
 export interface Alert {
@@ -35,4 +38,11 @@ export interface DashboardStats {
   expiringSoon: number;
   expiredProducts: number;
   lowStock: number;
+}
+
+export interface AuthUser {
+  id: string;
+  email: string;
+  name: string;
+  role: string;
 }

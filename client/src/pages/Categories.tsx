@@ -30,7 +30,7 @@ export function Categories() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Category Management</h1>
-          <p className="text-slate-500">Organize your inventory into logical groupings.</p>
+          <p className="text-slate-500">Organize your pharmacy inventory into logical groupings.</p>
         </div>
         <Button>
           <Plus className="w-4 h-4 mr-2" />
@@ -40,10 +40,10 @@ export function Categories() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {categoryStats.map(category => (
-          <Card key={category.id} className="hover:border-blue-300 transition-colors">
+          <Card key={category.id} className="hover:border-emerald-300 hover:shadow-md transition-all">
             <CardHeader className="flex flex-row items-center justify-between pb-2 border-b-0">
               <div className="flex items-center space-x-3">
-                <div className="p-2 bg-slate-100 rounded-lg text-slate-600">
+                <div className="p-2 bg-emerald-50 text-emerald-700 rounded-lg border border-emerald-100">
                   <Tags className="w-5 h-5" />
                 </div>
                 <CardTitle>{category.name}</CardTitle>

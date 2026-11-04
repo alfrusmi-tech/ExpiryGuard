@@ -1,13 +1,26 @@
 import React, { useState } from 'react';
 import { useInventory } from '../hooks/useInventory';
 import { Card, CardContent } from '../components/common/Card';
-import { Badge } from '../components/common/Badge';
 import { AlertCircle, AlertTriangle, Clock, CheckCircle2 } from 'lucide-react';
 import { formatDate } from '../utils/expiryUtils';
 
+type AlertFilter = 'all' | 'expired' | 'expiring_soon' | 'low_stock';
+
+interface TabItem {
+  id: AlertFilter;
+  label: string;
+}
+
+const TABS: TabItem[] = [
+  { id: 'all', label: 'All Alerts' },
+  { id: 'expired', label: 'Expired' },
+  { id: 'expiring_soon', label: 'Expiring Soon' },
+  { id: 'low_stock', label: 'Low Stock' },
+];
+
 export function ExpiryAlerts() {
   const { alerts, loading, products } = useInventory();
-  const [filter, setFilter] = useState<'all' | 'expired' | 'expiring_soon' | 'low_stock'>('all');
+  const [filter, setFilter] = useState<AlertFilter>('all');
 
   if (loading) {
     return <div className="animate-pulse h-96 bg-slate-200 rounded-xl"></div>;
@@ -42,18 +55,13 @@ export function ExpiryAlerts() {
 
       {/* Filter Tabs */}
       <div className="flex space-x-2 border-b border-slate-200">
-        {[
-          { id: 'all', label: 'All Alerts' },
-          { id: 'expired', label: 'Expired' },
-          { id: 'expiring_soon', label: 'Expiring Soon' },
-          { id: 'low_stock', label: 'Low Stock' },
-        ].map(tab => (
+        {TABS.map(tab => (
           <button
             key={tab.id}
-            onClick={() => setFilter(tab.id as any)}
+            onClick={() => setFilter(tab.id)}
             className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
               filter === tab.id 
-                ? 'border-blue-600 text-blue-600' 
+                ? 'border-emerald-600 text-emerald-600 font-semibold' 
                 : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
             }`}
           >
@@ -71,8 +79,8 @@ export function ExpiryAlerts() {
         {filteredAlerts.length === 0 ? (
           <Card>
             <CardContent className="py-12 flex flex-col items-center justify-center text-center">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
-                <CheckCircle2 className="w-8 h-8 text-green-600" />
+              <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-4">
+                <CheckCircle2 className="w-8 h-8 text-emerald-600" />
               </div>
               <h3 className="text-lg font-semibold text-slate-900">All Clear!</h3>
               <p className="text-slate-500 max-w-sm mt-1">
@@ -103,7 +111,7 @@ export function ExpiryAlerts() {
                   <button className="px-3 py-1.5 text-sm font-medium bg-white border border-slate-300 rounded hover:bg-slate-50 text-slate-700 transition-colors">
                     View Details
                   </button>
-                  <button className="px-3 py-1.5 text-sm font-medium bg-blue-600 border border-transparent rounded hover:bg-blue-700 text-white transition-colors">
+                  <button className="px-3 py-1.5 text-sm font-medium bg-emerald-600 border border-transparent rounded hover:bg-emerald-700 text-white transition-colors">
                     Mark Resolved
                   </button>
                 </div>

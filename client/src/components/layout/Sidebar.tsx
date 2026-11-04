@@ -9,9 +9,12 @@ import {
   Tags, 
   BarChart3, 
   Settings,
-  ShieldAlert
+  ShieldAlert,
+  LogOut,
+  X
 } from 'lucide-react';
 import { cn } from '../../utils/cn';
+import { useAuth } from '../../context/AuthContext';
 
 const navItems = [
   { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -24,29 +27,52 @@ const navItems = [
   { path: '/settings', label: 'Settings', icon: Settings },
 ];
 
-export function Sidebar() {
-  return (
-    <div className="w-64 bg-slate-900 h-full text-slate-300 flex flex-col hidden md:flex border-r border-slate-800">
-      <div className="h-16 flex items-center px-6 border-b border-slate-800">
-        <div className="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center mr-3 shadow-sm">
-          <ShieldAlert className="w-5 h-5 text-white" />
+interface SidebarProps {
+  mobileOpen?: boolean;
+  onMobileClose?: () => void;
+}
+
+export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
+  const { user, openLogoutModal } = useAuth();
+
+  const sidebarContent = (
+    <div className="w-64 bg-slate-900 h-full text-slate-300 flex flex-col border-r border-slate-800 shrink-0 select-none">
+      {/* Brand Header */}
+      <div className="h-16 flex items-center justify-between px-6 border-b border-slate-800">
+        <div className="flex items-center">
+          <div className="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center mr-3 shadow-sm">
+            <ShieldAlert className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <span className="text-white font-bold text-lg tracking-tight block leading-tight">ExpiryGuard</span>
+            <span className="text-[10px] uppercase font-semibold tracking-wider text-emerald-400 block">Pharmacy System</span>
+          </div>
         </div>
-        <div>
-          <span className="text-white font-bold text-lg tracking-tight block leading-tight">ExpiryGuard</span>
-          <span className="text-[10px] uppercase font-semibold tracking-wider text-emerald-400 block">Pharmacy System</span>
-        </div>
+
+        {/* Mobile close button */}
+        {onMobileClose && (
+          <button 
+            onClick={onMobileClose}
+            className="md:hidden text-slate-400 hover:text-white p-1 rounded-md"
+            aria-label="Close sidebar"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        )}
       </div>
       
+      {/* Nav items */}
       <div className="flex-1 py-6 px-3 space-y-1 overflow-y-auto">
         {navItems.map((item) => (
           <NavLink
             key={item.path}
             to={item.path}
+            onClick={() => onMobileClose && onMobileClose()}
             className={({ isActive }) =>
               cn(
                 "flex items-center px-3 py-2.5 rounded-lg transition-colors text-sm font-medium",
                 isActive 
-                  ? "bg-emerald-600/15 text-emerald-400 font-semibold"
+                  ? "bg-emerald-600/15 text-emerald-400 font-semibold" 
                   : "hover:bg-slate-800 hover:text-white"
               )
             }
@@ -55,24 +81,61 @@ export function Sidebar() {
             <span className="flex-1">{item.label}</span>
             {item.path === '/scan-product' && (
               <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">
-                New
+                Live
               </span>
             )}
           </NavLink>
         ))}
       </div>
       
-      <div className="p-4 border-t border-slate-800">
-        <div className="flex items-center px-3 py-2">
-          <div className="w-8 h-8 rounded-full bg-emerald-800 text-emerald-100 flex items-center justify-center font-bold text-xs ring-2 ring-emerald-500/20">
-            RX
+      {/* User profile & Logout */}
+      <div className="p-4 border-t border-slate-800 bg-slate-950/40">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center min-w-0 pr-2">
+            <div className="w-8 h-8 rounded-full bg-emerald-800 text-emerald-100 flex items-center justify-center font-bold text-xs ring-2 ring-emerald-500/20 shrink-0">
+              RX
+            </div>
+            <div className="ml-3 truncate">
+              <p className="text-sm font-medium text-white truncate">{user?.name || 'Pharmacist Admin'}</p>
+              <p className="text-xs text-emerald-400/80 truncate">Pharmacy Inventory</p>
+            </div>
           </div>
-          <div className="ml-3">
-            <p className="text-sm font-medium text-white">Pharmacist Admin</p>
-            <p className="text-xs text-emerald-400/80">Pharmacy Inventory</p>
-          </div>
+
+          <button
+            onClick={() => {
+              if (onMobileClose) onMobileClose();
+              openLogoutModal();
+            }}
+            title="Sign Out"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-red-400 hover:bg-slate-800 transition-colors shrink-0"
+            aria-label="Sign out"
+          >
+            <LogOut className="w-4 h-4" />
+          </button>
         </div>
       </div>
     </div>
+  );
+
+  return (
+    <>
+      {/* Desktop Sidebar */}
+      <aside className="hidden md:flex h-full">
+        {sidebarContent}
+      </aside>
+
+      {/* Mobile Drawer Backdrop & Drawer */}
+      {mobileOpen && (
+        <div className="fixed inset-0 z-50 md:hidden flex">
+          <div 
+            className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity" 
+            onClick={onMobileClose} 
+          />
+          <div className="relative z-10 animate-in slide-in-from-left duration-200">
+            {sidebarContent}
+          </div>
+        </div>
+      )}
+    </>
   );
 }

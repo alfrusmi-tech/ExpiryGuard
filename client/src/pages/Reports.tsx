@@ -14,7 +14,7 @@ export function Reports() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Reports & Analytics</h1>
-          <p className="text-slate-500">Generate and export insights about your inventory.</p>
+          <p className="text-slate-500">Generate and export insights about your pharmacy inventory.</p>
         </div>
         <Button variant="outline">
           <Download className="w-4 h-4 mr-2" />
@@ -23,10 +23,10 @@ export function Reports() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="border-t-4 border-t-blue-500">
+        <Card className="border-t-4 border-t-emerald-500 shadow-2xs">
           <CardHeader>
-            <CardTitle className="flex items-center text-lg">
-              <FileText className="w-5 h-5 mr-2 text-blue-500" />
+            <CardTitle className="flex items-center text-lg text-slate-900">
+              <FileText className="w-5 h-5 mr-2 text-emerald-600" />
               Inventory Summary
             </CardTitle>
           </CardHeader>
@@ -37,9 +37,9 @@ export function Reports() {
           </CardContent>
         </Card>
 
-        <Card className="border-t-4 border-t-red-500">
+        <Card className="border-t-4 border-t-red-500 shadow-2xs">
           <CardHeader>
-            <CardTitle className="flex items-center text-lg">
+            <CardTitle className="flex items-center text-lg text-slate-900">
               <TrendingDown className="w-5 h-5 mr-2 text-red-500" />
               Waste & Spoilage
             </CardTitle>
@@ -51,9 +51,9 @@ export function Reports() {
           </CardContent>
         </Card>
 
-        <Card className="border-t-4 border-t-amber-500">
+        <Card className="border-t-4 border-t-amber-500 shadow-2xs">
           <CardHeader>
-            <CardTitle className="flex items-center text-lg">
+            <CardTitle className="flex items-center text-lg text-slate-900">
               <BarChart className="w-5 h-5 mr-2 text-amber-500" />
               Expiry Projection
             </CardTitle>

@@ -9,6 +9,7 @@ const dateExpired = format(subDays(today, 5), 'yyyy-MM-dd');
 const dateExpiringCritical = format(addDays(today, 3), 'yyyy-MM-dd');
 const dateExpiringSoon = format(addDays(today, 15), 'yyyy-MM-dd');
 const dateGood = format(addDays(today, 180), 'yyyy-MM-dd');
+const dateMfd = format(subDays(today, 90), 'yyyy-MM-dd');
 
 export const mockCategories: Category[] = [
   { id: 'c1', name: 'Dairy', description: 'Milk, cheese, yogurt', itemCount: 3 },
@@ -26,10 +27,13 @@ export const mockProducts: Product[] = [
     name: 'Whole Milk 1L',
     categoryId: 'c1',
     sku: 'DAI-001',
+    barcode: '8901001000018',
     batchNumber: 'B-1001',
     quantity: 45,
+    manufacturingDate: dateMfd,
     expiryDate: dateExpiringCritical,
     supplier: 'Dairy Farms Inc',
+    unitPrice: 3.50,
     reorderLevel: 20
   },
   {
@@ -37,10 +41,13 @@ export const mockProducts: Product[] = [
     name: 'Greek Yogurt',
     categoryId: 'c1',
     sku: 'DAI-002',
+    barcode: '8901001000025',
     batchNumber: 'B-1002',
     quantity: 12, // low stock
+    manufacturingDate: dateMfd,
     expiryDate: dateExpired,
     supplier: 'Dairy Farms Inc',
+    unitPrice: 4.25,
     reorderLevel: 20
   },
   {
@@ -48,10 +55,13 @@ export const mockProducts: Product[] = [
     name: 'Digestive Biscuits',
     categoryId: 'c2',
     sku: 'SNK-001',
+    barcode: '8901002000032',
     batchNumber: 'B-2001',
     quantity: 120,
+    manufacturingDate: dateMfd,
     expiryDate: dateGood,
     supplier: 'SnackCo',
+    unitPrice: 2.10,
     reorderLevel: 50
   },
   {
@@ -59,10 +69,13 @@ export const mockProducts: Product[] = [
     name: 'Paracetamol 500mg',
     categoryId: 'c3',
     sku: 'MED-001',
+    barcode: '8901030012345',
     batchNumber: 'M-5001',
     quantity: 200,
+    manufacturingDate: dateMfd,
     expiryDate: dateGood,
     supplier: 'PharmaLife',
+    unitPrice: 8.75,
     reorderLevel: 50
   },
   {
@@ -70,10 +83,13 @@ export const mockProducts: Product[] = [
     name: 'Cough Syrup',
     categoryId: 'c3',
     sku: 'MED-002',
+    barcode: '8901030054321',
     batchNumber: 'M-5002',
     quantity: 5, // low stock
+    manufacturingDate: dateMfd,
     expiryDate: dateExpiringSoon,
     supplier: 'PharmaLife',
+    unitPrice: 12.00,
     reorderLevel: 15
   },
   {
@@ -81,10 +97,13 @@ export const mockProducts: Product[] = [
     name: 'Canned Beans',
     categoryId: 'c4',
     sku: 'CAN-001',
+    barcode: '8901004000063',
     batchNumber: 'C-3001',
     quantity: 300,
+    manufacturingDate: dateMfd,
     expiryDate: dateGood,
     supplier: 'PreserveFoods',
+    unitPrice: 1.80,
     reorderLevel: 100
   },
   {
@@ -92,10 +111,13 @@ export const mockProducts: Product[] = [
     name: 'Orange Juice 2L',
     categoryId: 'c5',
     sku: 'BEV-001',
+    barcode: '8901005000070',
     batchNumber: 'J-4001',
     quantity: 60,
+    manufacturingDate: dateMfd,
     expiryDate: dateExpiringCritical,
     supplier: 'FreshSqueeze',
+    unitPrice: 5.50,
     reorderLevel: 30
   },
   {
@@ -103,10 +125,13 @@ export const mockProducts: Product[] = [
     name: 'Fresh Spinach',
     categoryId: 'c6',
     sku: 'PRO-001',
+    barcode: '8901006000087',
     batchNumber: 'V-6001',
     quantity: 25,
+    manufacturingDate: dateMfd,
     expiryDate: dateExpired,
     supplier: 'Local Farm',
+    unitPrice: 2.20,
     reorderLevel: 10
   },
   {
@@ -114,10 +139,13 @@ export const mockProducts: Product[] = [
     name: 'Moisturizing Lotion',
     categoryId: 'c7',
     sku: 'COS-001',
+    barcode: '8901007000094',
     batchNumber: 'B-7001',
     quantity: 85,
+    manufacturingDate: dateMfd,
     expiryDate: dateExpiringSoon,
     supplier: 'BeautyBrands',
+    unitPrice: 15.00,
     reorderLevel: 30
   },
 ].map(product => ({

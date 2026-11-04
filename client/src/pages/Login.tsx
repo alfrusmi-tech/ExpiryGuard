@@ -1,67 +1,91 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { ShieldAlert, ArrowLeft, LogIn } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { ShieldAlert, LogIn, Pill } from 'lucide-react';
 import { Button } from '../components/common/Button';
 import { Input } from '../components/common/Input';
 import { Card, CardContent } from '../components/common/Card';
+import { useAuth } from '../context/AuthContext';
 
 export function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login, isAuthenticated } = useAuth();
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(true);
   const [error, setError] = useState('');
 
-  const handleLogin = (e: React.FormEvent) => {
+  // If already logged in, redirect to dashboard
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!email || !password) {
-      setError('Please enter both email and password.');
+    if (!email.trim() || !password) {
+      setError('Please enter both email/username and password.');
       return;
     }
 
     setIsSubmitting(true);
     setError('');
 
-    // Mock authentication delay (Spring Boot / JWT integration goes here later)
-    setTimeout(() => {
+    try {
+      // Authenticate and start frontend session
+      await login(email.trim(), password, rememberMe);
       setIsSubmitting(false);
-      // Navigate to the dashboard after "successful" login
-      navigate('/dashboard');
-    }, 800);
+
+      // Navigate to intended destination or dashboard
+      const destination = (location.state as { from?: { pathname?: string } })?.from?.pathname || '/dashboard';
+      navigate(destination, { replace: true });
+    } catch (err: unknown) {
+      setIsSubmitting(false);
+      setError(err instanceof Error ? err.message : 'Authentication failed. Please check your credentials.');
+    }
   };
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans">
       <div className="sm:mx-auto sm:w-full sm:max-w-md flex flex-col items-center">
-        <Link to="/" className="flex items-center space-x-3 mb-8 group">
-          <ShieldAlert className="w-10 h-10 text-blue-600 group-hover:scale-110 transition-transform" />
+        <Link to="/" className="flex items-center space-x-3 mb-6 group">
+          <div className="w-12 h-12 rounded-xl bg-emerald-600 flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform">
+            <ShieldAlert className="w-7 h-7" />
+          </div>
           <span className="text-3xl font-extrabold text-slate-900 tracking-tight">ExpiryGuard</span>
         </Link>
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-semibold mb-3 border border-emerald-200">
+          <Pill className="w-3.5 h-3.5 text-emerald-600" />
+          Pharmacy Portal Authentication
+        </div>
         <h2 className="text-center text-2xl font-bold text-slate-900 tracking-tight">
           Sign in to your account
         </h2>
         <p className="mt-2 text-center text-sm text-slate-600">
           Or{' '}
-          <Link to="/" className="font-medium text-blue-600 hover:text-blue-500">
+          <Link to="/" className="font-medium text-emerald-600 hover:text-emerald-700">
             return to the home page
           </Link>
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <Card className="shadow-lg border-slate-200/60">
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md px-4 sm:px-0">
+        <Card className="shadow-lg border-slate-200/80">
           <CardContent className="px-4 py-8 sm:px-10">
-            <form className="space-y-6" onSubmit={handleLogin}>
+            <form className="space-y-5" onSubmit={handleLogin}>
               <Input 
                 label="Email address or Username" 
                 name="email"
                 type="text"
-                autoComplete="email"
+                autoComplete="username email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@expiryguard.local"
+                placeholder="Enter your email or username"
               />
 
               <Input 
@@ -76,8 +100,8 @@ export function Login() {
               />
 
               {error && (
-                <div className="text-sm text-red-600 bg-red-50 p-3 rounded-md border border-red-100">
-                  {error}
+                <div className="text-sm text-red-600 bg-red-50 p-3 rounded-lg border border-red-100 flex items-center">
+                  <span>{error}</span>
                 </div>
               )}
 
@@ -87,16 +111,18 @@ export function Login() {
                     id="remember-me"
                     name="remember-me"
                     type="checkbox"
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded cursor-pointer"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    className="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-slate-300 rounded cursor-pointer"
                   />
-                  <label htmlFor="remember-me" className="ml-2 block text-sm text-slate-900 cursor-pointer">
-                    Remember me
+                  <label htmlFor="remember-me" className="ml-2 block text-sm text-slate-700 cursor-pointer select-none">
+                    Remember session
                   </label>
                 </div>
 
                 <div className="text-sm">
-                  <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
-                    Forgot your password?
+                  <a href="#" className="font-medium text-emerald-600 hover:text-emerald-700">
+                    Forgot password?
                   </a>
                 </div>
               </div>
@@ -104,32 +130,23 @@ export function Login() {
               <div>
                 <Button 
                   type="submit" 
-                  className="w-full text-base py-2.5" 
+                  className="w-full text-base py-2.5 font-semibold shadow-md" 
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? 'Signing in...' : (
+                  {isSubmitting ? (
+                    <span className="flex items-center justify-center">
+                      <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></span>
+                      Authenticating...
+                    </span>
+                  ) : (
                     <>
                       <LogIn className="w-5 h-5 mr-2" /> 
-                      Sign in
+                      Sign In to Pharmacy
                     </>
                   )}
                 </Button>
               </div>
             </form>
-            
-            <div className="mt-6">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-slate-300" />
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-slate-500">Demo Environment</span>
-                </div>
-              </div>
-              <div className="mt-6 text-center text-sm text-slate-500">
-                Any credentials will work during this demo phase.
-              </div>
-            </div>
           </CardContent>
         </Card>
       </div>
