@@ -37,7 +37,7 @@ export function Login() {
 
     try {
       // Authenticate and start frontend session
-      await login(email.trim(), password, rememberMe);
+      await login(email.trim(), password);
       setIsSubmitting(false);
 
       // Navigate to intended destination or dashboard

@@ -7,6 +7,8 @@ import com.expiryguard.server.repository.ProductRepository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.expiryguard.server.entity.SystemSettings;
+import com.expiryguard.server.repository.SystemSettingsRepository;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -20,11 +22,13 @@ public class AlertController {
 
     private final BatchRepository batches;
     private final ProductRepository products;
+    private final SystemSettingsRepository settingsRepository;
 
     public AlertController(BatchRepository batches,
-                           ProductRepository products) {
+                           ProductRepository products,SystemSettingsRepository settingsRepository) {
         this.batches = batches;
         this.products = products;
+        this.settingsRepository = settingsRepository;
     }
 
     public record AlertResponse(
@@ -40,7 +44,15 @@ public class AlertController {
     @GetMapping
     public List<AlertResponse> getAlerts() {
         LocalDate today = LocalDate.now();
-        LocalDate warningDate = today.plusDays(30);
+
+        SystemSettings settings = settingsRepository.findById(1L)
+                .orElseGet(SystemSettings::new);
+
+        LocalDate warningDate =
+                today.plusDays(settings.getExpiringSoonDays());
+
+        LocalDate criticalDate =
+                today.plusDays(settings.getCriticalExpiryDays());;
 
         List<AlertResponse> alerts = new ArrayList<>();
         Map<Long, Long> availableStock = new HashMap<>();
@@ -73,18 +85,26 @@ public class AlertController {
                         Long::sum
                 );
 
+
                 if (!expiry.isAfter(warningDate)) {
+
+                    // Check whether the medicine is critically close to expiry
+                    String prefix = !expiry.isAfter(criticalDate)
+                            ? "CRITICAL: "
+                            : "";
+
                     alerts.add(new AlertResponse(
                             "expiring-" + batch.getId(),
                             productId,
                             batch.getId(),
                             "expiring_soon",
-                            productName + " batch " + batch.getBatchNumber()
+                            prefix + productName + " batch " + batch.getBatchNumber()
                                     + " expires on " + expiry,
                             today,
                             false
                     ));
                 }
+
             }
         }
 

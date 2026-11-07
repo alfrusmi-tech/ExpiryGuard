@@ -11,6 +11,7 @@ export interface Product {
   id: string;
   name: string;
   categoryId: string;
+  productId?: string;
   sku: string;
   batchNumber: string;
   quantity: number;
@@ -23,9 +24,13 @@ export interface Product {
   unitPrice?: number;
 }
 
+export type ProductCreateInput =
+  Omit<Product, 'id' | 'reorderLevel'> & { reorderLevel?: number };
+
 export interface Alert {
   id: string;
   productId: string;
+  batchId?: string;
   type: 'expired' | 'expiring_soon' | 'low_stock';
   message: string;
   date: string;

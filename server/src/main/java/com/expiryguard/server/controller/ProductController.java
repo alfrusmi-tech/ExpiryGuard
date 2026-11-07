@@ -4,6 +4,7 @@ import com.expiryguard.server.entity.Category;
 import com.expiryguard.server.entity.Product;
 import com.expiryguard.server.repository.CategoryRepository;
 import com.expiryguard.server.repository.ProductRepository;
+import com.expiryguard.server.service.InventoryThresholdService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -20,17 +21,20 @@ public class ProductController {
 
     private final ProductRepository products;
     private final CategoryRepository categories;
+    private final InventoryThresholdService thresholds;
 
     public ProductController(ProductRepository products,
-                             CategoryRepository categories) {
+                             CategoryRepository categories,
+                             InventoryThresholdService thresholds) {
         this.products = products;
         this.categories = categories;
+        this.thresholds = thresholds;
     }
 
     public record ProductRequest(
             @NotBlank String name,
             @NotBlank String sku,
-            @NotNull @Min(0) Integer reorderLevel,
+            @Min(0) Integer reorderLevel,
             @NotNull Long categoryId
     ) {}
 
@@ -68,7 +72,11 @@ public class ProductController {
         Product product = new Product();
         product.setName(request.name().trim());
         product.setSku(sku);
-        product.setReorderLevel(request.reorderLevel());
+        product.setReorderLevel(
+                thresholds.effectiveReorderLevel(
+                        request.reorderLevel(), thresholds.currentSettings()
+                )
+        );
         product.setCategory(category);
 
         return toResponse(products.save(product));

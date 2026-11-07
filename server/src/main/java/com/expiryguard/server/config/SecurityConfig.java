@@ -28,6 +28,7 @@ import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.csrf.CsrfAuthenticationStrategy;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
+import org.springframework.http.HttpMethod;
 
 @Configuration
 @EnableWebSecurity
@@ -91,15 +92,98 @@ public class SecurityConfig {
                         )
                 )
 
+
                 .authorizeHttpRequests(auth -> auth
+
+                        // Public authentication endpoints
                         .requestMatchers(
                                 "/api/auth/login",
                                 "/api/auth/csrf",
                                 "/error"
                         ).permitAll()
 
-                        .anyRequest().authenticated()
+                        // Logged-in users can check their session
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/auth/me"
+                        ).authenticated()
+
+                        // Both roles can view inventory information
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/products/**",
+                                "/api/inventory",
+                                "/api/products",
+                                "/api/batches",
+                                "/api/categories",
+                                "/api/suppliers",
+                                "/api/purchases",
+                                "/api/alerts",
+                                "/api/stock-movements",
+                                "/api/dashboard/stats"
+                        ).hasAnyRole("ADMIN", "PHARMACIST")
+
+                        // Both roles can register inventory and manage stock
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/api/inventory",
+                                "/api/batches",
+                                "/api/stock-movements"
+                        ).hasAnyRole("ADMIN", "PHARMACIST")
+
+                        // Administrative creation of master records
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/api/products",
+                                "/api/categories",
+                                "/api/suppliers",
+                                "/api/purchases"
+                        ).hasRole("ADMIN")
+
+                        // Future editing/deletion endpoints stay admin-only
+                        .requestMatchers(
+                                HttpMethod.PUT,
+                                "/api/products/**",
+                                "/api/categories/**",
+                                "/api/suppliers/**",
+                                "/api/purchases/**"
+                        ).hasRole("ADMIN")
+
+                        .requestMatchers(
+                                HttpMethod.PATCH,
+                                "/api/products/**",
+                                "/api/categories/**",
+                                "/api/suppliers/**",
+                                "/api/purchases/**"
+                        ).hasRole("ADMIN")
+
+                        .requestMatchers(
+                                HttpMethod.DELETE,
+                                "/api/products/**",
+                                "/api/categories/**",
+                                "/api/suppliers/**",
+                                "/api/purchases/**"
+                        ).hasRole("ADMIN")
+
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/reports/**"
+                        ).hasRole("ADMIN")
+
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/settings"
+                        ).hasRole("ADMIN")
+
+                        .requestMatchers(
+                                HttpMethod.PUT,
+                                "/api/settings"
+                        ).hasRole("ADMIN")
+
+                        // Unknown endpoints are denied until explicitly authorized
+                        .anyRequest().denyAll()
                 )
+
 
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(

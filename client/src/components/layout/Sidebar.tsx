@@ -63,7 +63,9 @@ export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
       
       {/* Nav items */}
       <div className="flex-1 py-6 px-3 space-y-1 overflow-y-auto">
-        {navItems.map((item) => (
+        {navItems.filter(item =>  user?.role === 'ADMIN' || !['/settings', '/reports'].includes(item.path) )
+  .map((item) => (
+    // Keep your existing navigation item JSX here.
           <NavLink
             key={item.path}
             to={item.path}
