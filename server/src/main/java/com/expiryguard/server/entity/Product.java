@@ -19,6 +19,17 @@ public class Product {
     @Column(nullable = false)
     private Integer reorderLevel;
 
+    @Column(unique = true, length = 64)
+    private String barcode;
+
+    public String getBarcode() {
+        return barcode;
+    }
+
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
+    }
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;

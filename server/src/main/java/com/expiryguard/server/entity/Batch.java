@@ -2,6 +2,7 @@ package com.expiryguard.server.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.math.BigDecimal;
 
 @Entity
 @Table(
@@ -37,6 +38,27 @@ public class Batch {
     @ManyToOne
     @JoinColumn(name = "purchase_id")
     private Purchase purchase;
+
+    private LocalDate manufacturingDate;
+
+    @Column(precision = 12, scale = 2)
+    private BigDecimal unitPrice;
+
+    public LocalDate getManufacturingDate() {
+        return manufacturingDate;
+    }
+
+    public void setManufacturingDate(LocalDate manufacturingDate) {
+        this.manufacturingDate = manufacturingDate;
+    }
+
+    public BigDecimal getUnitPrice() {
+        return unitPrice;
+    }
+
+    public void setUnitPrice(BigDecimal unitPrice) {
+        this.unitPrice = unitPrice;
+    }
 
     public Long getId() { return id; }
 

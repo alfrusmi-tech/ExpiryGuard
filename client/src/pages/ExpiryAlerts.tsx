@@ -3,6 +3,7 @@ import { useInventory } from '../hooks/useInventory';
 import { Card, CardContent } from '../components/common/Card';
 import { AlertCircle, AlertTriangle, Clock, CheckCircle2 } from 'lucide-react';
 import { formatDate } from '../utils/expiryUtils';
+import { Link } from 'react-router-dom';
 
 type AlertFilter = 'all' | 'expired' | 'expiring_soon' | 'low_stock';
 
@@ -19,12 +20,25 @@ const TABS: TabItem[] = [
 ];
 
 export function ExpiryAlerts() {
-  const { alerts, loading, products } = useInventory();
+  const { alerts, loading, products, error, refreshData } = useInventory();
   const [filter, setFilter] = useState<AlertFilter>('all');
 
   if (loading) {
     return <div className="animate-pulse h-96 bg-slate-200 rounded-xl"></div>;
   }
+  if (error) {
+  return (
+    <div role="alert" className="p-6 rounded-xl border border-red-200">
+      <p className="text-red-700">{error}</p>
+      <button
+        onClick={() => void refreshData()}
+        className="mt-3 underline"
+      >
+        Retry
+      </button>
+    </div>
+  );
+}
 
   const filteredAlerts = alerts.filter(a => filter === 'all' || a.type === filter);
 
@@ -90,7 +104,9 @@ export function ExpiryAlerts() {
           </Card>
         ) : (
           filteredAlerts.map(alert => {
-            const product = products.find(p => p.id === alert.productId);
+            const product = alert.batchId
+                ? products.find(p => p.id === alert.batchId)
+                : products.find(p => p.productId === alert.productId);
             return (
               <div 
                 key={alert.id} 
@@ -108,12 +124,16 @@ export function ExpiryAlerts() {
                   </div>
                 </div>
                 <div className="flex items-center space-x-2 shrink-0 pl-14 sm:pl-0">
-                  <button className="px-3 py-1.5 text-sm font-medium bg-white border border-slate-300 rounded hover:bg-slate-50 text-slate-700 transition-colors">
-                    View Details
-                  </button>
-                  <button className="px-3 py-1.5 text-sm font-medium bg-emerald-600 border border-transparent rounded hover:bg-emerald-700 text-white transition-colors">
-                    Mark Resolved
-                  </button>
+                  <Link
+                     to={
+                       alert.batchId
+                          ? `/inventory?batchId=${encodeURIComponent(alert.batchId)}`
+                          : `/inventory?productId=${encodeURIComponent(alert.productId)}`
+                    }
+                    className="px-3 py-2 text-sm font-medium bg-white border border-slate-300 rounded-lg hover:bg-slate-50"
+                  >
+                    View in Inventory
+                  </Link>
                 </div>
               </div>
             );

@@ -1,61 +1,91 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { AuthUser } from '../types';
+
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  type ReactNode
+} from 'react';
+
+import type { AuthUser } from '../types';
 import { authService } from '../services/authService';
 
 interface AuthContextType {
   user: AuthUser | null;
   isAuthenticated: boolean;
-  login: (email: string, password: string, rememberMe?: boolean) => Promise<AuthUser>;
+  loading: boolean;
+  login: (
+    identifier: string,
+    password: string
+  ) => Promise<AuthUser>;
   logout: () => Promise<void>;
   isLogoutModalOpen: boolean;
   openLogoutModal: () => void;
   closeLogoutModal: () => void;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<
+  AuthContextType | undefined
+>(undefined);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AuthUser | null>(() => authService.getUser());
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => authService.isAuthenticated());
-  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+export function AuthProvider({
+  children
+}: {
+  children: ReactNode
+}) {
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] =
+    useState(false);
 
   useEffect(() => {
-    const unsubscribe = authService.subscribe((isAuth) => {
-      setIsAuthenticated(isAuth);
-      setUser(authService.getUser());
-    });
-    return unsubscribe;
+    let active = true;
+
+    authService.getCurrentUser()
+      .then(currentUser => {
+        if (active) setUser(currentUser);
+      })
+      .catch(error => {
+        console.error('Session check failed:', error);
+        if (active) setUser(null);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
   }, []);
 
-  const login = async (email: string, password: string, rememberMe?: boolean): Promise<AuthUser> => {
-    const authUser = await authService.login(email, password, rememberMe);
-    setUser(authUser);
-    setIsAuthenticated(true);
-    return authUser;
+  const login = async (
+    identifier: string,
+    password: string
+  ) => {
+    const authenticatedUser =
+      await authService.login(identifier, password);
+
+    setUser(authenticatedUser);
+    return authenticatedUser;
   };
 
-  const logout = async (): Promise<void> => {
+  const logout = async () => {
     await authService.logout();
     setUser(null);
-    setIsAuthenticated(false);
     setIsLogoutModalOpen(false);
   };
 
-  const openLogoutModal = () => setIsLogoutModalOpen(true);
-  const closeLogoutModal = () => setIsLogoutModalOpen(false);
-
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        isAuthenticated,
-        login,
-        logout,
-        isLogoutModalOpen,
-        openLogoutModal,
-        closeLogoutModal,
-      }}
-    >
+    <AuthContext.Provider value={{
+      user,
+      isAuthenticated: user !== null,
+      loading,
+      login,
+      logout,
+      isLogoutModalOpen,
+      openLogoutModal: () => setIsLogoutModalOpen(true),
+      closeLogoutModal: () => setIsLogoutModalOpen(false)
+    }}>
       {children}
     </AuthContext.Provider>
   );
@@ -63,8 +93,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
+
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error(
+      'useAuth must be used within AuthProvider'
+    );
   }
+
   return context;
 }

@@ -7,22 +7,68 @@ import { formatDate } from '../utils/expiryUtils';
 import { Link } from 'react-router-dom';
 
 export function Dashboard() {
-  const { stats, alerts, products, loading } = useInventory();
+  const { stats, alerts, products, loading, error, refreshData } = useInventory();
 
-  if (loading || !stats) {
+
+  // 1. Show loading animation only while data is loading
+  if (loading) {
     return (
       <div className="animate-pulse space-y-6">
         <div className="h-8 bg-slate-200 rounded w-1/4"></div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          {[1,2,3,4].map(i => <div key={i} className="h-32 bg-slate-200 rounded-xl"></div>)}
+          {[1, 2, 3, 4].map(i => (
+            <div
+              key={i}
+              className="h-32 bg-slate-200 rounded-xl"
+            ></div>
+          ))}
         </div>
       </div>
     );
   }
 
-  const recentActivity = [...products].sort((a, b) => 
-    new Date(a.expiryDate).getTime() - new Date(b.expiryDate).getTime()
-  ).slice(0, 5);
+  // 2. Display API errors with a retry button
+  if (error) {
+    return (
+      <div role="alert" className="p-6 rounded-xl border border-red-200">
+        <h2 className="font-semibold text-red-700">
+          Unable to load dashboard
+        </h2>
+        <p className="text-sm mt-2">{error}</p>
+        <button
+          type="button"
+          onClick={() => void refreshData()}
+          className="mt-3 text-emerald-700 underline"
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
+
+  // 3. Handle missing dashboard statistics
+  if (!stats) {
+    return (
+      <div className="p-6 text-center text-slate-600">
+        <p>Dashboard statistics are unavailable.</p>
+        <button
+          type="button"
+          onClick={() => void refreshData()}
+          className="mt-3 text-emerald-700 underline"
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
+
+
+  const recentActivity = products
+  .filter(product => product.quantity > 0)
+  .sort((a, b) =>
+    a.expiryDate.localeCompare(b.expiryDate)
+  )
+  .slice(0, 5);
 
   return (
     <div className="space-y-6">
