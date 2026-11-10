@@ -17,7 +17,7 @@ ExpiryGuard is an inventory and expiry-tracking system for pharmacies and medici
 
 | Layer | Technology |
 |---|---|
-| Frontend | React 19, TypeScript, Vite, Tailwind CSS, React Router, Recharts, html5-qrcode, date-fns |
+| Frontend | React 19, TypeScript, Vite, Tailwind CSS, React Router |
 | Backend | Spring Boot 4.1, Java 25, Spring Security, Spring Data JPA, Bean Validation |
 | Database | PostgreSQL 17 |
 | Containers | Docker, Docker Compose, nginx |
@@ -172,17 +172,5 @@ All changes require a session login and a CSRF token. Read endpoints are availab
 - Use Docker or platform secrets instead of `.env`.
 - Replace `spring.jpa.hibernate.ddl-auto=update` with versioned migrations (Flyway or Liquibase).
 - Run the containers as a non-root user.
-
-## Troubleshooting
-
-| Problem | Fix |
-|---|---|
-| `password authentication failed for user` | `DB_PASSWORD` doesn't match the value the database volume was created with. Use the original password, or run `docker compose down -v` to reset the database (this deletes its data). |
-| `Could not resolve placeholder 'DB_PASSWORD'` | The environment variable isn't set in your run configuration. |
-| `Admin bootstrap refused: users already exist` | Remove the `EXPIRYGUARD_BOOTSTRAP_*` variables after the first run. |
-| Login fails in local dev | Check that the backend is running on port 9090 and the Vite `/api` proxy is set. |
-| Docker disk usage keeps growing | Run `docker image prune -f` and `docker builder prune -f` regularly. |
-
-## License
 
 Add a license before publishing.
