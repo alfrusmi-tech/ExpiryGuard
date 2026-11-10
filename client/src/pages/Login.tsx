@@ -121,9 +121,9 @@ export function Login() {
                 </div>
 
                 <div className="text-sm">
-                  <a href="#" className="font-medium text-emerald-600 hover:text-emerald-700">
-                    Forgot password?
-                  </a>
+                  <Link to="/register" className="font-medium text-emerald-600 hover:text-emerald-700">
+                    Create an account
+                  </Link>
                 </div>
               </div>
 

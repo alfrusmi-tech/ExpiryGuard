@@ -11,6 +11,7 @@ import {
   Settings,
   ShieldAlert,
   LogOut,
+   Users as UsersIcon,
   X
 } from 'lucide-react';
 import { cn } from '../../utils/cn';
@@ -25,6 +26,7 @@ const navItems = [
   { path: '/categories', label: 'Categories', icon: Tags },
   { path: '/reports', label: 'Reports', icon: BarChart3 },
   { path: '/settings', label: 'Settings', icon: Settings },
+  { path: '/users', label: 'Users', icon: UsersIcon },
 ];
 
 interface SidebarProps {
@@ -63,7 +65,7 @@ export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
       
       {/* Nav items */}
       <div className="flex-1 py-6 px-3 space-y-1 overflow-y-auto">
-        {navItems.filter(item =>  user?.role === 'ADMIN' || !['/settings', '/reports'].includes(item.path) )
+        {navItems.filter(item =>  user?.role === 'ADMIN' || !['/settings', '/reports','/users'].includes(item.path) )
   .map((item) => (
     // Keep your existing navigation item JSX here.
           <NavLink

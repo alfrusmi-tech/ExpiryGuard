@@ -44,9 +44,11 @@ public class FirstAdminBootstrap implements ApplicationRunner {
 
         // Allow bootstrapping only an empty users table.
         if (userRepository.count() != 0) {
-            throw new IllegalStateException(
-                    "Admin bootstrap refused: users already exist."
+            System.out.println(
+                    "Admin bootstrap skipped: users already exist. "
+                            + "You can remove EXPIRYGUARD_BOOTSTRAP_PASSWORD."
             );
+            return;
         }
 
         String username = environment.getProperty(

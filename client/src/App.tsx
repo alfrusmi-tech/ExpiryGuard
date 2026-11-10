@@ -13,6 +13,8 @@ import { ExpiryAlerts } from './pages/ExpiryAlerts';
 import { Categories } from './pages/Categories';
 import { Reports } from './pages/Reports';
 import { Settings } from './pages/Settings';
+import { Register } from './pages/Register';
+import { Users } from './pages/Users';
 
 function App() {
   return (
@@ -22,6 +24,7 @@ function App() {
           {/* Public */}
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
 
           {/* Logged-in users */}
           <Route element={<ProtectedRoute />}>
@@ -37,6 +40,7 @@ function App() {
               <Route element={<AdminRoute />}>
                 <Route path="/reports" element={<Reports />} />
                 <Route path="/settings" element={<Settings />} />
+                <Route path="/users" element={<Users />} />
               </Route>
             </Route>
           </Route>

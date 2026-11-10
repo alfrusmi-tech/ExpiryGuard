@@ -181,7 +181,15 @@ export function Categories() {
           </Card>
         ))}
       </div>
-
+            {categoryStats.length === 0 && (
+        <div className="rounded-xl border border-dashed border-slate-300 p-8 text-center text-slate-500">
+          No categories yet.
+          {isAdmin
+            ? ' Click "Add Category" to create the first one.'
+            : ' Ask an administrator to add categories.'}
+        </div>
+      )}
+      
       {showForm && isAdmin && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4"

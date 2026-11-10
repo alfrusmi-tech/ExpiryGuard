@@ -99,6 +99,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/auth/login",
                                 "/api/auth/csrf",
+                                "/api/auth/register",
                                 "/error"
                         ).permitAll()
 
@@ -180,8 +181,13 @@ public class SecurityConfig {
                                 "/api/settings"
                         ).hasRole("ADMIN")
 
+                        // User management is admin-only
+                        .requestMatchers("/api/users", "/api/users/**")
+                        .hasRole("ADMIN")
+
                         // Unknown endpoints are denied until explicitly authorized
                         .anyRequest().denyAll()
+
                 )
 
 
@@ -225,5 +231,3 @@ public class SecurityConfig {
         return http.build();
     }
 }
-
-

@@ -69,7 +69,21 @@ export const authService = {
       throw error;
     }
   },
-
+    async register(data: {
+    name: string;
+    username: string;
+    email: string;
+    password: string;
+  }): Promise<{ approved: boolean; message: string }> {
+    return apiRequest<{ approved: boolean; message: string }>(
+      '/auth/register',
+      {
+        method: 'POST',
+        body: JSON.stringify(data)
+      }
+    );
+  },
+  
   async logout(): Promise<void> {
     await apiRequest<void>('/auth/logout', {
       method: 'POST'

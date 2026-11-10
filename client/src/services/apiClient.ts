@@ -24,11 +24,24 @@ export async function refreshCsrf(): Promise<void> {
     credentials: 'same-origin'
   });
 
-  if (!response.ok) {
-    throw new ApiError(
-      response.status,
-      'Unable to initialize session security'
-    );
+    if (!response.ok) {
+    let message = response.status === 401
+      ? 'Invalid credentials or expired session'
+      : `Request failed (HTTP ${response.status})`;
+
+    // The server sends {"message": "..."} for expected errors.
+    if (response.status !== 401) {
+      try {
+        const body = await response.json();
+        if (typeof body?.message === 'string' && body.message) {
+          message = body.message;
+        }
+      } catch {
+        // Response had no JSON body; keep the generic message.
+      }
+    }
+
+    throw new ApiError(response.status, message);
   }
 
   csrfToken = await response.json();
